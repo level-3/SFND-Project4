@@ -74,9 +74,8 @@ Beat (mixed) Signal
     %*%TODO* :
     %For each time stamp update the Range of the Target for constant velocity. 
 
-    r_t(i) = c*t(i)*fc/(2*B);   %range calcualtion
-
-    td(i) = (R+t(i)*v)/c; %time delay - tau
+    r_t(i) = R + v * t(i);
+    td(i)= 2 * r_t(i) / c;
     
     % *%TODO* :
     %For each time sample we need update the transmitted and
@@ -109,7 +108,7 @@ Beat (mixed) Signal
 ***MATLAB CODE***
 
 ```cpp
-% *%TODO* :
+ % *%TODO* :
 %reshape the vector into Nr*Nd array. Nr and Nd here would also define the size of
 %Range and Doppler FFT respectively.
 beat_signal = reshape(Mix, [Nr, Nd]);
@@ -120,11 +119,13 @@ beat_signal = reshape(Mix, [Nr, Nd]);
 fft_signal = fft(beat_signal)/Nr;
  % *%TODO* :
 % Take the absolute value of FFT output
-fft_abs = abs(fft_signal);
+fft_signal = abs(fft_signal);
+fft_signal = fft_signal/max(fft_signal); %normalise
+
  % *%TODO* :
 % Output of FFT is double sided signal, but we are interested in only one side of the spectrum.
 % Hence we throw out half of the samples.
-P1  = fft_abs(1:Nr/2) ;
+P1  = fft_signal(1:Nr/2) ;
 
 %plotting the range
 figure ('Name','Range from First FFT')
@@ -132,9 +133,10 @@ figure ('Name','Range from First FFT')
 
  % *%TODO* :
  % plot FFT output 
-f = Nr / length(P1) * (0 : (Nr / 2 - 1));
+
+f = 0 : length(P1) - 1;
 plot(f,P1);
-axis ([0 200 0 0.5]);
+axis ([0 200 0 1.0]);
 ```
 
 
@@ -199,6 +201,7 @@ end
 
 
 - *Selection of Training, Guard cells and offset.*
+
 <img src="images/CFAR2d.png" width="820" height="450" alt-text="CFAR 2D" />
 
 ***MATLAB CODE***
@@ -232,4 +235,14 @@ noise_level = zeros(1,1);
 RDM(RDM~=1) = 0; % set all non 1 values to zero
 ```
 
+CFAR
+
 <img src="images/CFAR.jpg" width="820" height="550" alt-text="CFAR" />
+
+Speed
+
+<img src="images/Speed.jpg" width="820" height="550" alt-text="CFAR" />
+
+Range
+
+<img src="images/Range.jpg" width="820" height="550" alt-text="CFAR" />

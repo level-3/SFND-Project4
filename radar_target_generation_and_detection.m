@@ -1,5 +1,5 @@
-clear all
-clc;
+clear; 
+close all; clc;
 
 %% Radar Specifications 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,7 +20,7 @@ vmax = 100;
 % define the target's initial position and velocity. Note : Velocity
 % remains contant
  R = 110;   %initial position of target
- v=-20;     %velocity of target
+ v = 20;    %velocity of target
 
 
 %% FMCW Waveform Generation
@@ -67,10 +67,8 @@ for i=1:length(t)
     
     % *%TODO* :
     %For each time stamp update the Range of the Target for constant velocity. 
-
-    r_t(i) = c*t(i)*fc/(2*B);   %range calcualtion
-
-    td(i) = (R+t(i)*v)/c; %time delay - tau
+    r_t(i) = R + v * t(i);
+    td(i)= 2 * r_t(i) / c;
     
     % *%TODO* :
     %For each time sample we need update the transmitted and
@@ -100,11 +98,13 @@ beat_signal = reshape(Mix, [Nr, Nd]);
 fft_signal = fft(beat_signal)/Nr;
  % *%TODO* :
 % Take the absolute value of FFT output
-fft_abs = abs(fft_signal);
+fft_signal = abs(fft_signal);
+fft_signal = fft_signal/max(fft_signal); %normalise
+
  % *%TODO* :
 % Output of FFT is double sided signal, but we are interested in only one side of the spectrum.
 % Hence we throw out half of the samples.
-P1  = fft_abs(1:Nr/2) ;
+P1  = fft_signal(1:Nr/2) ;
 
 %plotting the range
 figure ('Name','Range from First FFT')
@@ -112,9 +112,10 @@ figure ('Name','Range from First FFT')
 
  % *%TODO* :
  % plot FFT output 
-f = Nr / length(P1) * (0 : (Nr / 2 - 1));
+
+f = 0 : length(P1) - 1;
 plot(f,P1);
-axis ([0 200 0 0.5]);
+axis ([0 200 0 1.0]);
 
 
 
@@ -145,7 +146,7 @@ RDM = 10*log10(RDM) ;
 %dimensions
 doppler_axis = linspace(-100,100,Nd);
 range_axis = linspace(-200,200,Nr/2)*((Nr/2)/400);
-figure,surf(doppler_axis,range_axis,RDM);
+figure ('Name','2D FFT'),surf(doppler_axis,range_axis,RDM);
 
 %% CFAR implementation
 
@@ -159,7 +160,7 @@ Td = 8;
 % *%TODO* :
 %Select the number of Guard Cells in both dimensions around the Cell under 
 %test (CUT) for accurate estimation
-Gr = 4;
+Gr = 6;
 Gd = 4;
 
 % *%TODO* :
@@ -230,9 +231,16 @@ RDM(RDM~=1) = 0; % set all non 1 values to zero
 % *%TODO* :
 %display the CFAR output using the Surf function like we did for Range
 %Doppler Response output.
-figure,surf(doppler_axis,range_axis,RDM);
+
+figure ('Name','CFAR'),surf(doppler_axis,range_axis,RDM);
 colorbar;
 
 
+figure ('Name','CFAR - Speed'),surf(doppler_axis,range_axis,RDM);
+view(0,0);
+
+
+figure ('Name','CFAR - Range'),surf(doppler_axis,range_axis,RDM);
+view(90,0);
  
  
