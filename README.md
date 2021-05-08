@@ -44,7 +44,7 @@ Giving the slope of the chirp signal
 % chirp using the requirements above.
 
 B = c/2*delta_r; 
-Tchirp = 5*5*(2*Rmax)/c;
+Tchirp = 5.5*(2*Rmax)/c;
 slope = B/Tchirp;
 ```
 
@@ -216,7 +216,7 @@ Gd = 4;
 
 % *%TODO* :
 % offset the threshold by SNR value in dB
-offset = 14;
+offset = 10;
 % *%TODO* :
 %Create a vector to store noise_level for each iteration on training cells
 noise_level = zeros(1,1);
