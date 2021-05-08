@@ -142,6 +142,7 @@ axis ([0 200 0 0.5]);
 
 
 *Implement the 2D CFAR process on the output of 2D FFT operation, i.e the Range Doppler Map.*
+
 <img src="images/2DFFT.jpg" width="820" height="550" alt-text="2D FFT" />
 
 
